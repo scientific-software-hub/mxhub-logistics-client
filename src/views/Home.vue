@@ -15,7 +15,7 @@
         <!-- Layout for application links -->
         <div class="flex flex-col md:flex-row">
             <div class="p-4">
-                <a href="/stores/" class="">
+                <a href="/logistics/stores.html" class="">
                     <div class="text-white text-center bg-info p-4 rounded h-full">
                         <p class="text-3xl font-bold">Stores Dewar Management</p>
                         <p class="">To handle dewars coming into or out of the facility</p>
@@ -24,7 +24,7 @@
             </div>
 
             <div class="p-4">
-                <a href="/zone6/" class="">
+                <a href="/logistics/zone6.html" class="">
                     <div class="text-white text-center bg-info p-4 rounded h-full">
                         <p class="text-3xl font-bold">DESY Rack Management</p>
                         <p class="">To handle dewars to and from beamlines for DESY</p>

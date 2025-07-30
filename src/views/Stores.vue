@@ -12,7 +12,7 @@
                     <form>
                         <div class="mb-3 px-2">
                             <label class="block text-gray-700">Location</label>
-                            <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. STORES-IN or STORES-OUT">
+                            <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
                         </div>
 
                         <div class="mb-3 px-2">
@@ -42,19 +42,27 @@
                         <div class="w-1/2 mt-4">
                             <div class="flex-col text-center">
                                 <div class="">
-                                    <img class="inline-block" width=96 src='../assets/img/stores-in.gif'>
+                                    <img class="inline-block" width=96 src='../assets/img/qr-picking-point.svg'>
                                 </div>
-                               <p class="">STORES-IN</p>  
+                               <p class="">PICKING-POINT</p>
                             </div>
                         </div>
                         <div class="w-1/2 mt-4">
                             <div class="flex-col text-center">
                                 <div class="">
-                                    <img class="inline-block" width=96 src='../assets/img/stores-out.gif'>
+                                    <img class="inline-block" width=96 src='../assets/img/qr-dewar-hotel.svg'>
                                 </div>
-                                <p class="">STORES-OUT</p>
+                                <p class="">DEWAR-HOTEL</p>
                             </div>
                         </div>
+                      <div class="w-1/2 mt-4">
+                        <div class="flex-col text-center">
+                          <div class="">
+                            <img class="inline-block" width=96 src='../assets/img/qr-beamline.svg'>
+                          </div>
+                          <p class="">BEAMLINE</p>
+                        </div>
+                      </div>
                     </div>   
                 </div> <!-- END STORES LOCATIONS -->
 
@@ -383,7 +391,7 @@ export default {
         },
         // Internal validation method - check for valid location (stores in or out)
         isValidLocation: function(location) {
-            if (location.toUpperCase() === "STORES-IN" || location.toUpperCase() === "STORES-OUT") {
+            if (location.toUpperCase() === "PICKING-POINT" || location.toUpperCase() === "DEWAR-HOTEL" || location.toUpperCase() === "BEAMLINE") {
                 return true;
             } else {
                 return false;
