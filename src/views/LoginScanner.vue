@@ -1,6 +1,6 @@
 <template>
   <div class="scanner-page">
-    <h2>Scan Your Badge</h2>
+    <h2 class="text-3xl text-center font-bold">Please Scan Your Badge...</h2>
 <!--    class="hidden-input"-->
     <input
         ref="scannerInput"
@@ -10,7 +10,7 @@
         autofocus
     />
     <p v-if="error" class="error">{{ error }}</p>
-    <p v-if="loading">Logging in...</p>
+    <p v-if="loading">Logging you in! Have a great day!</p>
   </div>
 </template>
 

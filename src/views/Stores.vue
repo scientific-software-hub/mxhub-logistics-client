@@ -7,8 +7,8 @@
                            Area for messages from back end
                            Currently conditional render based on error or warning
                        -->
-          <div class="flex">
-            <article class="w-full m-2 px-12 py-4 border-l-4 min-h-16" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
+          <div class="flex min-h-24">
+            <article class="w-full m-2 px-12 py-4 border-l-4" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
               <div class="text-xl">
                 {{message}}
               </div>
@@ -27,7 +27,7 @@
                         <div class="mb-3 px-2">
                           <div class="flex-col text-center">
                             <div class="">
-                              <img class="inline-block" width=96 src='../assets/img/qr-picking-point.svg'>
+                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-picking-point.svg' @click="setLocation('PICKING-POINT')">
                             </div>
                             <p class="">PICKING-POINT</p>
                           </div>
@@ -35,7 +35,7 @@
                         <div class="mb-3 px-2">
                           <div class="flex-col text-center">
                             <div class="">
-                              <img class="inline-block" width=96 src='../assets/img/qr-dewar-hotel.svg'>
+                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-dewar-hotel.svg' @click="setLocation('DEWAR-HOTEL')">
                             </div>
                             <p class="">DEWAR-HOTEL</p>
                           </div>
@@ -43,7 +43,7 @@
                         <div class="mb-3 px-2">
                           <div class="flex-col text-center">
                             <div class="">
-                              <img class="inline-block" width=96 src='../assets/img/qr-beamline.svg'>
+                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-beamline.svg' @click="setLocation('BEAMLINE')">
                             </div>
                             <p class="">BEAMLINE</p>
                           </div>
@@ -65,11 +65,11 @@
                             <label class="block text-gray-700">Airway Bill</label>
                             <input ref="awb" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="awb" v-on:keydown.enter="onAwbEnter" placeholder="Scan the DHL / FedEx Airway Bill">
                         </div> -->
-                    
+
                         <div class="flex">
-                            <button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="onSetLocation">Submit</button>              
+                            <button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="onSetLocation">Submit</button>
                             <button type="cancel" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2"  v-on:click="onClearLocationForm">Cancel</button>
-                        </div>        
+                        </div>
                     </form>
 
                 </div>
@@ -122,6 +122,7 @@
 
         <footer class="py-4">
             <!-- Only here to provide some padding -->
+          {{scanBuffer}}
         </footer>
   </div>
 </template>
@@ -138,6 +139,7 @@ export default {
         dewars: [],
         // Data elements for form input
         barcode: '',
+        scanBuffer: '',
         location: '',
         awb: '',
         // Error message on find dewar, set location etc
@@ -167,6 +169,11 @@ export default {
 
         // When page is loaded set focus to the input location element
         this.$refs.location.focus();
+
+      window.addEventListener('keydown', this.onKeyDown)
+    },
+    beforeDestroy() {
+      window.removeEventListener('keydown', this.onKeyDown)
     },
     watch: {
         message: function(val) {
@@ -180,8 +187,40 @@ export default {
         refresh: function() {
             // window.localStorage.setItem('location', this.location)
             // We don't need to reload the page - just request an update from the server
-            this.getDewars(barCode)
+            this.getDewars(barcode)
         },
+      //action=setLocation&value=XXX
+      onKeyDown: function(e) {
+        if (e.key === 'Enter') {
+          // process the scan
+          const message = this.scanBuffer;
+          this.processScan(message)
+          this.scanBuffer = ''
+        } else {
+          // accumulate characters
+          if (e.key.length === 1) {
+            this.scanBuffer += e.key
+          }
+        }
+      },
+      processScan: function(message){
+        // Match: action=<something>&value=<something>
+        // Captures: group 1 = action, group 2 = value
+        const match = message.match(/^action=([^&]+)&value=(.+)$/);
+        if (match) {
+          const action = match[1];
+          const value = match[2];
+
+          if (action === 'setLocation') {
+            this.location = value;
+          } else {
+            console.warn('Unknown scan action:', action);
+          }
+        } else {
+          // No action/value pattern → treat as plain barcode
+          this.barcode = message;
+        }
+      },
 
         // Main method that retrieves dewar history from database
         getDewars: async function(barcode, event) {
@@ -212,12 +251,14 @@ export default {
             self.isError = true
           }
         },
+      setLocation: function(location){
+          this.location = location;
+      },
+
         // Method to update dewar location in database
         onSetLocation: async function(event) {
             console.log("onSetLocation")
             event.preventDefault()
-
-          alert("Stores.vue: onSetLocation method")
 
             let self = this
             let validLocation = this.isValidLocation(this.location)
@@ -243,14 +284,11 @@ export default {
                 self.playSuccess()
                 console.log("onSetLocation, Stores.vue")
 
-                alert("Stores.vue: json")
-
                 self.message = "Updated " + barcode + " to " + location
                 self.isError = false
 
-
                 // Request updated locations from DB
-                self.getDewars(barcode, event)
+                await self.getDewars(barcode, event)
               } catch(error){
                 console.log(error)
                 self.message = "Error updating " + barcode + " to " + location
@@ -272,9 +310,9 @@ export default {
                 if (this.location === "") {
                     this.message += ' no location provided...'
                 } else if (!validLocation) {
-                    this.message += ' location not valid for this application...'                            
+                    this.message += ' location not valid for this application...'
                 }
-            }                 
+            }
         },
 
       onClearFindForm: function(event) {
@@ -284,7 +322,7 @@ export default {
 
         // Reset Form fields
         onClearLocationForm: function(event) {
-            event.preventDefault()          
+            event.preventDefault()
             this.barcode = ''
             this.location = ''
             this.awb = ''
@@ -318,7 +356,7 @@ export default {
             // Reset the "hover" tag
             dewar.hover = false
         },
-        // Clear error/info messages in one go 
+        // Clear error/info messages in one go
         clearMessages: function() {
           this.message = ""
           this.isError = false
@@ -342,7 +380,7 @@ export default {
             let pattern2 = /^[0-9]{34}$/
 
             if (pattern1.test(awb) || pattern2.test(awb)) {
-                return true                        
+                return true
             } else {
                 return false
             }
