@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import LoginScanner from '@/views/LoginScanner.vue'
-import Dashboard from '@/views/Home.vue'
+import Dashboard from '@/views/Stores.vue'
 
 Vue.use(VueRouter)
 

@@ -88,36 +88,14 @@
             <h1 class="text-3xl font-bold text-center p-4">History</h1>
             <table class="border border-solid bg-white w-full">
                 <thead class="text-left bg-white-300 font-bold border border-solid">
-                    <th class="border px-3 py-2">Date/Time</th><th class="border px-3 py-2">Barcode</th><th class="border px-3 py-2">In or Out?</th><th class="border px-3 py-2">Destination</th><th class="border px-3 py-2">Airway Bill</th>
+                    <th class="border px-3 py-2">Date/Time</th><th class="border px-3 py-2">Barcode</th><th class="border px-3 py-2">Location</th><th class="border px-3 py-2">Status</th>
                 </thead>
                 <tbody class="">
                     <tr v-for="(dewar, index) in dewars" v-bind:key="index" class="hover:bg-blue-200">
                         <td class="p-2 border">{{dewar.date}}</td>
-                        <td class="p-2 border">{{dewar.barcode.toUpperCase()}} <span v-if="dewar.sid"><a v-bind:href="'https://ispyb.diamond.ac.uk/shipments/sid/' + dewar.sid">&#8599;</a></span></td>
+                        <td class="p-2 border">{{dewar.barcode.toUpperCase()}}</td>
                         <td class="p-2 border">{{dewar.storageLocation.toUpperCase()}}</td>
                         <td class="p-2 border">{{dewar.destination}}</td>
-
-                        <!-- If STORES OUT show links and/or plain AWB-->
-
-                        <td v-if="dewar.storageLocation.toUpperCase() === 'STORES-OUT'">
-                            <a class="text-blue-500"
-                                v-if="isDHL(dewar.awb)"
-                                v-on:mouseover="onGetCourierDestination(dewar)"
-                                v-on:mouseleave="onResetCourierDestination(dewar)"
-                                v-bind:href="'https://www.dhl.com/en/express/tracking.html?AWB=' + dewar.awb">{{dewar.awb}} (DHL)</a>
-                            <a class="text-blue-500"
-                                v-else-if="isFedexDatabaseRecord(dewar.awb)"
-                                v-bind:href="'http://www.fedex.com/apps/fedextrack/?trackingnumber=' + dewar.awb">{{dewar.awb}} (FedEx)</a>
-                            <span v-else>{{dewar.awb}}</span>
-                            <div v-bind:class="[dewar.courierDestination ? 'absolute bg-gray-300 text-blue-400 p-px' : 'hidden']">
-                                <p class="text-xl">DHL Destination: </p>
-                                <p class="text-sm">{{dewar.courierDestination}}</p>
-                            </div>
-                        </td>
-
-                        <!-- Else No value displayed if STORES-IN -->
-                        <td v-else>
-                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -168,10 +146,6 @@ export default {
 
         // When page is loaded set focus to the input location element
         this.$refs.location.focus();
-
-        this.getDewars()
-        // Set page to refresh every 60 minutes
-        setInterval(this.refresh, this.refreshInterval * 1000)
     },
     watch: {
         message: function(val) {
@@ -185,38 +159,46 @@ export default {
         refresh: function() {
             // window.localStorage.setItem('location', this.location)
             // We don't need to reload the page - just request an update from the server
-            this.getDewars()
+            this.getDewars(barCode)
         },
 
         // Main method that retrieves dewar history from database
-        getDewars: function() {
+        getDewars: async function(barCode) {
           let self = this
           self.dewars = []
 
-          let url = this.$store.state.apiRoot + "stores/dewars"
 
-          this.$http.get(url)
-          .then(function(response) {
-            console.log(response.data)
-            let json = response.data
-            let dewars = Object.keys(json);
-            
-            dewars.forEach(function(index) {
-              let dewar = json[index]
-              // Set a default courier destination so we can use it as popup later
-              dewar.courierDestination = ''
+          const token = this.$store.getters['auth/token'];
+          const url = `/ispyb/ispyb-ws/rest/${token}/dewar/${barCode}/history`
 
+          const response = await this.$http.get(url);
+          const dewars = response.data;
+
+          dewars.forEach(dewar => {
               self.dewars.push(dewar)
-            })
           })
-          .catch(function() {
-            console.log("Error getting initial data")
-            self.message = "Error retrieving initial data"
-            self.isError = true
-          })
+
+          // .then(function(response) {
+          //   console.log(response.data)
+          //   let json = response.data
+          //   let dewars = Object.keys(json);
+          //
+          //   dewars.forEach(function(index) {
+          //     let dewar = json[index]
+          //     // Set a default courier destination so we can use it as popup later
+          //     dewar.courierDestination = ''
+          //
+          //     self.dewars.push(dewar)
+          //   })
+          // })
+          // .catch(function() {
+          //   console.log("Error getting initial data")
+          //   self.message = "Error retrieving initial data"
+          //   self.isError = true
+          // })
         },
         // Method to update dewar location in database
-        onSetLocation: function(event) {
+        onSetLocation: async function(event) {
             console.log("onSetLocation")
             event.preventDefault()
 
@@ -226,9 +208,9 @@ export default {
             let validLocation = this.isValidLocation(this.location)
 
             if (this.barcode && this.location && validLocation) {
-                let barcode = this.barcode
-                let location = this.location
-                let username = "123"// user name
+                const barcode = this.barcode
+                const location = this.location
+                const username = this.$store.getters['auth/currentUser'] // user name
                 let awb = ''
                 // Only set Airway bill for Stores out
                 if (location.toUpperCase() === "STORES-OUT") {
@@ -247,43 +229,37 @@ export default {
 
              //   let url = this.$store.state.apiRoot + "stores/dewars"
 
-              const token = "123"// user Token;
-              const url = `http://localhost:8080/ispyb/ispyb-ws/rest/${token}/dewar/updateStatus`;
-              alert("Stores.vue: url="+url)
-                this.$http.post(url, formData, {
+              const token = this.$store.getters['auth/token'];
+              const url = `/ispyb/ispyb-ws/rest/${token}/dewar/location`;
+              try {
+                await this.$http.post(url, formData, {
                   headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
                   }
-                }) // goes to api/stores/routes.py or to Java server
-                .then(function(response) {
-                    console.log("onSetLocation, Stores.vue, response:"+response)
-                    let json = response.data
-                  alert("Stores.vue: json")
-                    // Changed because we don't get the dewar id back from synchweb
-                    // We get a DEWARHISTORYID instead
-                    if ( json['DEWARHISTORYID'] > 0 ) {
-                        self.message = "Updated " + barcode + " to " + location
-                        self.isError = false
-                        self.playSuccess()
-                    } else {
-                        self.message = "Error - no dewar history id returned"
-                        self.isError = true
-                        self.playFail();
-                    }
-                    // Request updated locations from DB                  
-                    self.getDewars()
-                })
-                .catch(function(error) {
-                    console.log(error)
-                    self.message = "Error updating " + barcode + " to " + location
-                    self.isError = true
-                    self.playFail();
-                })
+                }); // goes to api/stores/routes.py or to Java server
+                self.playSuccess()
+                console.log("onSetLocation, Stores.vue")
+
+                alert("Stores.vue: json")
+
+                self.message = "Updated " + barcode + " to " + location
+                self.isError = false
+
+
+                // Request updated locations from DB
+                self.getDewars(barcode)
+              } catch(error){
+                console.log(error)
+                self.message = "Error updating " + barcode + " to " + location
+                self.isError = true
+                self.playFail();
+              } finally {
                 // Set focus to barcode (likely to want to reuse location)
                 this.$refs.barcode.focus()
                 // Rest form values (Keep location element as is)
                 this.barcode = ''
-                this.awb = ''    
+                this.awb = ''
+              }
             } else {
                 this.message = "Issue with form: "
                 this.isError = true
