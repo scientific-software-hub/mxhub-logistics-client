@@ -2,19 +2,59 @@
   <div class="stores">
         <div class="">
 
-            <!-- First set of columns are the top form elements -->
+
+          <!--
+                           Area for messages from back end
+                           Currently conditional render based on error or warning
+                       -->
+          <div class="flex">
+            <article class="w-full m-2 px-12 py-4 border-l-4 min-h-16" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
+              <div class="text-xl">
+                {{message}}
+              </div>
+            </article>
+          </div>
+          <!-- First set of columns are the top form elements -->
             <div class="flex flex-col sm:flex-row">
 
                 <!-- Form element to set locations -->
                 <div class="w-1/2 border border-solid border-black m-2 p-2">
-                    <h2 class="text-3xl text-center font-bold">Scan Dewar and Barcode</h2>
+                    <h2 class="text-3xl text-center font-bold">Please Scan Or Click Any Of The</h2>
 
                     <form>
+                      <h2 class="text-3xl text-center font-bold">Locations</h2>
+                      <br />
                         <div class="mb-3 px-2">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block" width=96 src='../assets/img/qr-picking-point.svg'>
+                            </div>
+                            <p class="">PICKING-POINT</p>
+                          </div>
+                        </div>
+                        <div class="mb-3 px-2">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block" width=96 src='../assets/img/qr-dewar-hotel.svg'>
+                            </div>
+                            <p class="">DEWAR-HOTEL</p>
+                          </div>
+                        </div>
+                        <div class="mb-3 px-2">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block" width=96 src='../assets/img/qr-beamline.svg'>
+                            </div>
+                            <p class="">BEAMLINE</p>
+                          </div>
+                        </div>
+
+                      <div class="mb-3 px-2">
                             <label class="block text-gray-700">Location</label>
                             <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
                         </div>
 
+                      <h2 class="text-3xl text-center font-bold">Please Scan Dewar Barcode</h2>
                         <div class="mb-3 px-2">
                             <label class="block text-gray-700">Barcode</label>
                             <input ref="barcode" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="barcode" v-on:keydown.enter="onBarcodeEnter" placeholder="Scan the QR code / barcode from the dewar case">
@@ -35,71 +75,50 @@
                 </div>
 
 
-                <div class="w-1/2 border border-solid border-black m-2 p-2 "> <!-- STORES LOCATIONS  -->
-                    <h2 class="text-3xl text-center font-bold">Locations</h2>
-                    <br />
+
+              <div class="w-1/2 border border-solid border-black m-2 p-2 ">
+                <section>
+                  <h2 class="text-3xl text-center font-bold py-2">Find a Dewar</h2>
+                  <form>
+                    <div class="mb-3 px-2">
+                      <label class="block text-gray-700">BarCode</label>
+                      <input type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="barcode" placeholder="e.g. DLS-MX-####">
+                    </div>
                     <div class="flex">
-                        <div class="w-1/2 mt-4">
-                            <div class="flex-col text-center">
-                                <div class="">
-                                    <img class="inline-block" width=96 src='../assets/img/qr-picking-point.svg'>
-                                </div>
-                               <p class="">PICKING-POINT</p>
-                            </div>
-                        </div>
-                        <div class="w-1/2 mt-4">
-                            <div class="flex-col text-center">
-                                <div class="">
-                                    <img class="inline-block" width=96 src='../assets/img/qr-dewar-hotel.svg'>
-                                </div>
-                                <p class="">DEWAR-HOTEL</p>
-                            </div>
-                        </div>
-                      <div class="w-1/2 mt-4">
-                        <div class="flex-col text-center">
-                          <div class="">
-                            <img class="inline-block" width=96 src='../assets/img/qr-beamline.svg'>
-                          </div>
-                          <p class="">BEAMLINE</p>
-                        </div>
-                      </div>
-                    </div>   
-                </div> <!-- END STORES LOCATIONS -->
+                      <button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="getDewars(barcode, $event)">Search</button>
+                      <button type="submit" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2" v-on:click="onClearFindForm">Cancel</button>
+                    </div>
+                  </form>
+                </section>
+
+
+                <!-- Display the stores history -->
+                <div class="flex flex-col m-2 p-2">
+                  <h1 class="text-3xl font-bold text-center p-4">History</h1>
+                  <table class="border border-solid bg-white w-full">
+                    <thead class="text-left bg-white-300 font-bold border border-solid">
+                    <th class="border px-3 py-2">Date/Time</th><th class="border px-3 py-2">Barcode</th><th class="border px-3 py-2">Location</th><th class="border px-3 py-2">Status</th>
+                    </thead>
+                    <tbody class="">
+                    <tr v-for="(dewar, index) in dewars" v-bind:key="index" class="hover:bg-blue-200">
+                      <td class="p-2 border">{{dewar.date}}</td>
+                      <td class="p-2 border">{{dewar.barcode.toUpperCase()}}</td>
+                      <td class="p-2 border">{{dewar.storageLocation.toUpperCase()}}</td>
+                      <td class="p-2 border">{{dewar.destination}}</td>
+                    </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
 
 
             </div> <!-- End of columns -->
 
-            <!-- 
-                Area for messages from back end 
-                Currently conditional render based on error or warning
-            -->
-            <div v-if="message" class="flex">
-                <article class="w-full m-2 px-12 py-4 border-l-4" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
-                    <div class="text-xl">
-                    {{message}}
-                    </div>
-                </article>
-            </div>
 
         </div> <!-- END container fluid -->
 
-        <!-- Display the stores history -->
-        <div class="flex flex-col m-2 p-2">
-            <h1 class="text-3xl font-bold text-center p-4">History</h1>
-            <table class="border border-solid bg-white w-full">
-                <thead class="text-left bg-white-300 font-bold border border-solid">
-                    <th class="border px-3 py-2">Date/Time</th><th class="border px-3 py-2">Barcode</th><th class="border px-3 py-2">Location</th><th class="border px-3 py-2">Status</th>
-                </thead>
-                <tbody class="">
-                    <tr v-for="(dewar, index) in dewars" v-bind:key="index" class="hover:bg-blue-200">
-                        <td class="p-2 border">{{dewar.date}}</td>
-                        <td class="p-2 border">{{dewar.barcode.toUpperCase()}}</td>
-                        <td class="p-2 border">{{dewar.storageLocation.toUpperCase()}}</td>
-                        <td class="p-2 border">{{dewar.destination}}</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+
+
 
         <footer class="py-4">
             <!-- Only here to provide some padding -->
@@ -126,18 +145,20 @@ export default {
         message: "",
         isError: false,
         isFormOK: true,
-        clearMessageInterval: 3, // Message interval in seconds
+        clearMessageInterval: 6, // Message interval in seconds
         refreshInterval: 3600, // Page Refresh interval in seconds (i.e. every hour)
       }
     },
     // Initialize the sound library and files
     created: function() {
+      const base = this.$router.options.base || ''
+
         this.sounds = {}
         this.sounds.success = new Howl({
-            src: ['/static/audio/success.mp3', '/static/audio/success.wav']
+            src: [`${base}/static/audio/success.mp3`, `${base}/static/audio/success.wav`]
         });
         this.sounds.fail = new Howl({
-            src: ['/static/audio/fail.mp3', '/static/audio/fail.wav']
+            src: [`${base}/static/audio/fail.mp3`, `${base}/static/audio/fail.wav`]
         });
     },
     // Lifecycle hook - called when Vue is mounted on the page...
@@ -163,39 +184,33 @@ export default {
         },
 
         // Main method that retrieves dewar history from database
-        getDewars: async function(barCode) {
+        getDewars: async function(barcode, event) {
+          event.preventDefault()
           let self = this
           self.dewars = []
 
 
           const token = this.$store.getters['auth/token'];
-          const url = `/ispyb/ispyb-ws/rest/${token}/dewar/${barCode}/history`
+          const url = `/ispyb/ispyb-ws/rest/${token}/dewar/${barcode}/history`
 
-          const response = await this.$http.get(url);
-          const dewars = response.data;
+          try {
+            const response = await this.$http.get(url);
+            const dewars = response.data;
 
-          dewars.forEach(dewar => {
+            dewars.forEach(dewar => {
               self.dewars.push(dewar)
-          })
+            })
 
-          // .then(function(response) {
-          //   console.log(response.data)
-          //   let json = response.data
-          //   let dewars = Object.keys(json);
-          //
-          //   dewars.forEach(function(index) {
-          //     let dewar = json[index]
-          //     // Set a default courier destination so we can use it as popup later
-          //     dewar.courierDestination = ''
-          //
-          //     self.dewars.push(dewar)
-          //   })
-          // })
-          // .catch(function() {
-          //   console.log("Error getting initial data")
-          //   self.message = "Error retrieving initial data"
-          //   self.isError = true
-          // })
+            self.playSuccess()
+            self.message = "Found transport history for Dewar[" + barcode + "]"
+            self.isError = false
+
+          } catch(error){
+            console.log("Error getting initial data")
+            self.playFail();
+            self.message = "No data found for Dewar[" + barcode + "] due to " + error.message
+            self.isError = true
+          }
         },
         // Method to update dewar location in database
         onSetLocation: async function(event) {
@@ -211,23 +226,11 @@ export default {
                 const barcode = this.barcode
                 const location = this.location
                 const username = this.$store.getters['auth/currentUser'] // user name
-                let awb = ''
-                // Only set Airway bill for Stores out
-                if (location.toUpperCase() === "STORES-OUT") {
-                    awb = this.awb // Field is optional
-
-                    // If it's a Fedex code we want a 14 digit tracking number
-                    if (this.isFedex(awb)) {
-                        awb = this.getFedexTrackingNumber(awb)
-                    }
-                }
 
                 let formData = new FormData();
                 formData.append('barCode', barcode)
                 formData.append('location', location)
                 formData.append('username', username)
-
-             //   let url = this.$store.state.apiRoot + "stores/dewars"
 
               const token = this.$store.getters['auth/token'];
               const url = `/ispyb/ispyb-ws/rest/${token}/dewar/location`;
@@ -247,7 +250,7 @@ export default {
 
 
                 // Request updated locations from DB
-                self.getDewars(barcode)
+                self.getDewars(barcode, event)
               } catch(error){
                 console.log(error)
                 self.message = "Error updating " + barcode + " to " + location
@@ -273,6 +276,11 @@ export default {
                 }
             }                 
         },
+
+      onClearFindForm: function(event) {
+        event.preventDefault()
+        this.barcode = ''
+      },
 
         // Reset Form fields
         onClearLocationForm: function(event) {
