@@ -8,8 +8,8 @@ export default {
         onKeyDown(e) {
             if (e.key === 'Enter') {
                 const message = this.scanBuffer
-                this.processScan(message) // expects component to have processScan()
                 this.scanBuffer = ''
+                this.processScan(message) // expects component to have processScan()
             } else if (e.key.length === 1) {
                 this.scanBuffer += e.key
             }
