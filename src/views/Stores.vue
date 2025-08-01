@@ -171,6 +171,10 @@ export default {
         this.$refs.location.focus();
 
       window.addEventListener('keydown', this.onKeyDown)
+
+      setTimeout(() => {
+        this.$router.push('/');
+      }, this.refreshInterval)
     },
     beforeDestroy() {
       window.removeEventListener('keydown', this.onKeyDown)
