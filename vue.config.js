@@ -1,5 +1,6 @@
 module.exports = {
-  publicPath: "/logistics",
+  baseUrl: process.env.VUE_APP_BASE_URL || '/logistics',
+  publicPath: process.env.VUE_APP_BASE_URL || '/logistics',
     devServer: {
       proxy: {
         '^/api': {

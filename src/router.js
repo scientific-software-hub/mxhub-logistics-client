@@ -7,7 +7,7 @@ Vue.use(VueRouter)
 
 export default new VueRouter({
     mode: 'history',
-    base: '/logistics',
+    base: process.env.VUE_APP_BASE_URL || '/logistics',
     routes: [
         { path: '/', redirect: '/login' },
         { path: '/login', component: LoginScanner },
