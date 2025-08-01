@@ -19,42 +19,18 @@
 
                 <!-- Form element to set locations -->
                 <div class="w-1/2 border border-solid border-black m-2 p-2">
-                    <h2 class="text-3xl text-center font-bold">Please Scan Or Click Any Of The</h2>
+                    <h2 class="text-3xl text-center font-bold">Please, scan or click on Location</h2>
 
                     <form>
-                      <h2 class="text-3xl text-center font-bold">Locations</h2>
-                      <br />
-                        <div class="mb-3 px-2">
-                          <div class="flex-col text-center">
-                            <div class="">
-                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-picking-point.svg' @click="setLocation('PICKING-POINT')">
-                            </div>
-                            <p class="">PICKING-POINT</p>
-                          </div>
-                        </div>
-                        <div class="mb-3 px-2">
-                          <div class="flex-col text-center">
-                            <div class="">
-                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-dewar-hotel.svg' @click="setLocation('DEWAR-HOTEL')">
-                            </div>
-                            <p class="">DEWAR-HOTEL</p>
-                          </div>
-                        </div>
-                        <div class="mb-3 px-2">
-                          <div class="flex-col text-center">
-                            <div class="">
-                              <img class="inline-block cursor-pointer" width=192 src='../assets/img/qr-beamline.svg' @click="setLocation('BEAMLINE')">
-                            </div>
-                            <p class="">BEAMLINE</p>
-                          </div>
-                        </div>
+
+
 
                       <div class="mb-3 px-2">
                             <label class="block text-gray-700">Location</label>
                             <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
                         </div>
 
-                      <h2 class="text-3xl text-center font-bold">Please Scan Dewar Barcode</h2>
+                      <h2 class="text-3xl text-center font-bold">Please, scan dewar barcode</h2>
                         <div class="mb-3 px-2">
                             <label class="block text-gray-700">Barcode</label>
                             <input ref="barcode" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="barcode" v-on:keydown.enter="onBarcodeEnter" placeholder="Scan the QR code / barcode from the dewar case">
@@ -70,6 +46,36 @@
                             <button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="onSetLocation">Submit</button>
                             <button type="cancel" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2"  v-on:click="onClearLocationForm">Cancel</button>
                         </div>
+
+
+                      <h2 class="text-3xl text-center font-bold">Locations</h2>
+                      <br />
+                      <div class="flex">
+                      <div class="w-1/2 mt-4">
+                        <div class="flex-col text-center">
+                          <div class="">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="setLocation('PICKING-POINT')">
+                          </div>
+                          <p class="">PICKING-POINT</p>
+                        </div>
+                      </div>
+                      <div class="w-1/2 mt-4">
+                        <div class="flex-col text-center">
+                          <div class="">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-dewar-hotel.svg' @click="setLocation('DEWAR-HOTEL')">
+                          </div>
+                          <p class="">DEWAR-HOTEL</p>
+                        </div>
+                      </div>
+                      <div class="w-1/2 mt-4">
+                        <div class="flex-col text-center">
+                          <div class="">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-beamline.svg' @click="setLocation('BEAMLINE')">
+                          </div>
+                          <p class="">BEAMLINE</p>
+                        </div>
+                      </div>
+                      </div> <!-- END STORES LOCATIONS -->
                     </form>
 
                 </div>

@@ -6,7 +6,7 @@
         ref="scannerInput"
         v-model="scanInput"
         @keyup.enter="onScan"
-
+        class="hidden-input"
         autofocus
     />
     <p v-if="error" class="error">{{ error }}</p>
