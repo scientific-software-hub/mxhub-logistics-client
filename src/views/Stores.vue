@@ -1,18 +1,29 @@
 <template>
   <div class="stores">
-        <div class="">
 
 
+          <div class="flex sm:flex-row flex-col items-center w-full">
           <!--
                            Area for messages from back end
                            Currently conditional render based on error or warning
                        -->
-          <div class="flex min-h-24">
-            <article class="w-full m-2 px-12 py-4 border-l-4" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
+          <div class="w-full min-h-24">
+            <article class="m-2 px-12 py-4 border-l-4" v-bind:class="[isError ? 'bg-red-100 border-red-400 text-red-700' : 'bg-blue-100 border-blue-400 text-blue-800']">
               <div class="text-xl">
                 {{message}}
               </div>
             </article>
+          </div>
+            <div class="flex justify-end">
+              <button
+                  type="button"
+                  @click="onLogout"
+                  class="w-16 h-16 text-white bg-link hover:bg-blue-800 rounded-full p-3 m-2"
+                  title="Logout"
+              >
+                <i class="fa fa-lock fa-2x"></i>
+              </button>
+            </div>
           </div>
           <!-- First set of columns are the top form elements -->
             <div class="flex flex-col sm:flex-row">
@@ -20,11 +31,7 @@
                 <!-- Form element to set locations -->
                 <div class="w-1/2 border border-solid border-black m-2 p-2">
                     <h2 class="text-3xl text-center font-bold">Please, scan or click on Location</h2>
-
                     <form>
-
-
-
                       <div class="mb-3 px-2">
                             <label class="block text-gray-700">Location</label>
                             <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
@@ -47,10 +54,9 @@
                             <button type="cancel" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2"  v-on:click="onClearLocationForm">Cancel</button>
                         </div>
 
-
-                      <h2 class="text-3xl text-center font-bold">Locations</h2>
+                      <h2 class="text-3xl text-center font-bold">Locations:</h2>
                       <br />
-                      <div class="flex">
+                      <div class="flex flex-col sm:flex-row">
                       <div class="w-1/2 mt-4">
                         <div class="flex-col text-center">
                           <div class="">
@@ -77,10 +83,7 @@
                       </div>
                       </div> <!-- END STORES LOCATIONS -->
                     </form>
-
                 </div>
-
-
 
               <div class="w-1/2 border border-solid border-black m-2 p-2 ">
                 <section>
@@ -120,12 +123,6 @@
 
             </div> <!-- End of columns -->
 
-
-        </div> <!-- END container fluid -->
-
-
-
-
         <footer class="py-4">
             <!-- Only here to provide some padding -->
           {{scanBuffer}}
@@ -154,6 +151,7 @@ export default {
         isError: false,
         isFormOK: true,
         clearMessageInterval: 6, // Message interval in seconds
+        logoutTimeout: null,
         refreshInterval: 3600*1000, // Page Refresh interval in milliseconds (i.e. every hour)
       }
     },
@@ -171,19 +169,22 @@ export default {
     },
     // Lifecycle hook - called when Vue is mounted on the page...
     mounted: function() {
-        console.log("Vue App Instance Mounted")
+        console.log("UI for Store page is mounted")
 
         // When page is loaded set focus to the input location element
         this.$refs.location.focus();
 
       window.addEventListener('keydown', this.onKeyDown)
 
-      setTimeout(() => {
+      this.logoutTimeout =  setTimeout(() => {
         this.$router.push('/');
       }, this.refreshInterval)
     },
     beforeDestroy() {
+      console.log("UI for Store page is destroyed")
       window.removeEventListener('keydown', this.onKeyDown)
+      if(this.logoutTimeout)
+        clearTimeout(this.logoutTimeout)
     },
     watch: {
         message: function(val) {
@@ -199,6 +200,9 @@ export default {
             // We don't need to reload the page - just request an update from the server
             this.getDewars(barcode)
         },
+      onLogout: function(){
+          this.$router.push('/');
+      },
       //action=setLocation&value=XXX
       onKeyDown: function(e) {
         if (e.key === 'Enter') {
