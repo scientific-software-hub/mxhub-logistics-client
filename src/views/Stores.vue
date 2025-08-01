@@ -60,7 +60,7 @@
                       <div class="w-1/2 mt-4">
                         <div class="flex-col text-center">
                           <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="setLocation('PICKING-POINT')">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="processScan('action=location&value=PICKING-POINT')">
                           </div>
                           <p class="">PICKING-POINT</p>
                         </div>
@@ -68,7 +68,7 @@
                       <div class="w-1/2 mt-4">
                         <div class="flex-col text-center">
                           <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-dewar-hotel.svg' @click="setLocation('DEWAR-HOTEL')">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-dewar-hotel.svg' @click="processScan('action=location&value=DEWAR-HOTEL')">
                           </div>
                           <p class="">DEWAR-HOTEL</p>
                         </div>
@@ -76,7 +76,7 @@
                       <div class="w-1/2 mt-4">
                         <div class="flex-col text-center">
                           <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-beamline.svg' @click="setLocation('BEAMLINE')">
+                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-beamline.svg' @click="processScan('action=location&value=BEAMLINE')">
                           </div>
                           <p class="">BEAMLINE</p>
                         </div>
@@ -133,6 +133,7 @@
 <script>
 // Importing axios so we can cancel requests
 import {Howl} from 'howler'
+import scannerMixin from '@/mixins/scannerMixin'
 
 export default {
   name: 'stores',
@@ -150,7 +151,7 @@ export default {
         message: "",
         isError: false,
         isFormOK: true,
-        clearMessageInterval: 6, // Message interval in seconds
+        clearMessageInterval: 6*1000, // Message interval in milliseconds
         logoutTimeout: null,
         refreshInterval: 3600*1000, // Page Refresh interval in milliseconds (i.e. every hour)
       }
@@ -172,7 +173,7 @@ export default {
         console.log("UI for Store page is mounted")
 
         // When page is loaded set focus to the input location element
-        this.$refs.location.focus();
+        // this.$refs.location.focus();
 
       window.addEventListener('keydown', this.onKeyDown)
 
@@ -190,52 +191,23 @@ export default {
         message: function(val) {
             if (val !== "") {
                 console.log("Clear message after " + this.clearMessageInterval + " s ")
-                setTimeout(this.clearMessages, this.clearMessageInterval*1000)
+                setTimeout(this.clearMessages, this.clearMessageInterval)
             }
         }
     },
+    mixins: [scannerMixin],
     methods: {
         refresh: function() {
             // window.localStorage.setItem('location', this.location)
             // We don't need to reload the page - just request an update from the server
             this.getDewars(barcode)
         },
-      onLogout: function(){
-          this.$router.push('/');
-      },
-      //action=setLocation&value=XXX
-      onKeyDown: function(e) {
-        if (e.key === 'Enter') {
-          // process the scan
-          const message = this.scanBuffer;
-          this.processScan(message)
-          this.scanBuffer = ''
-        } else {
-          // accumulate characters
-          if (e.key.length === 1) {
-            this.scanBuffer += e.key
-          }
-        }
-      },
-      processScan: function(message){
-        // Match: action=<something>&value=<something>
-        // Captures: group 1 = action, group 2 = value
-        const match = message.match(/^action=([^&]+)&value=(.+)$/);
-        if (match) {
-          const action = match[1];
-          const value = match[2];
-
-          if (action === 'setLocation') {
-            this.location = value;
-          } else {
-            console.warn('Unknown scan action:', action);
-          }
-        } else {
-          // No action/value pattern → treat as plain barcode
-          this.barcode = message;
-        }
-      },
-
+        onLogout: function(){
+            this.$router.push('/');
+        },
+        setBarcode: function (value){
+          this.barcode = value;
+        },
         // Main method that retrieves dewar history from database
         getDewars: async function(barcode, event) {
           event.preventDefault()
@@ -310,7 +282,7 @@ export default {
                 self.playFail();
               } finally {
                 // Set focus to barcode (likely to want to reuse location)
-                this.$refs.barcode.focus()
+                // this.$refs.barcode.focus()
                 // Rest form values (Keep location element as is)
                 this.barcode = ''
                 this.awb = ''

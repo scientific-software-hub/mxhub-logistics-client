@@ -15,6 +15,8 @@
 </template>
 
 <script>
+import scannerMixin from "@/mixins/scannerMixin";
+
 export default {
   name: 'LoginScanner',
   data() {
@@ -25,17 +27,14 @@ export default {
     }
   },
   mounted() {
-    this.$refs.scannerInput.focus()
+    // this.$refs.scannerInput.focus()
   },
+  mixins: [scannerMixin],
   methods: {
-    onScan: async function() {
+    doLogin: async function(value) {
       try {
-        //action=login&username=alice&password=secret123
-        const parsed = new URLSearchParams(this.scanInput.trim())
-        if (parsed.get('action') !== 'login') throw new Error('Invalid action')
-
-        const login = parsed.get('username')
-        const password = parsed.get('password')
+        //action=login&value=hakanj:ispyb
+        const [ login, password ] = value.split(":");
 
         if (!login || !password) throw new Error('Missing credentials')
 
