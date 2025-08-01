@@ -148,7 +148,7 @@ export default {
         isError: false,
         isFormOK: true,
         clearMessageInterval: 6, // Message interval in seconds
-        refreshInterval: 3600, // Page Refresh interval in seconds (i.e. every hour)
+        refreshInterval: 3600*1000, // Page Refresh interval in milliseconds (i.e. every hour)
       }
     },
     // Initialize the sound library and files
