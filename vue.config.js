@@ -3,8 +3,8 @@ module.exports = {
   publicPath: process.env.VUE_APP_BASE_URL || '/logistics',
     devServer: {
       proxy: {
-        '^/api': {
-          target: 'http://131.169.73.83:8008',
+        '^/ispyb': {
+          target: 'http://localhost:8080',
           ws: true,
           changeOrigin: true
         }
