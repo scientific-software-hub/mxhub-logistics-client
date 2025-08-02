@@ -1,5 +1,15 @@
 <template>
   <div class="scanner-page">
+    <h1 class="text-4xl text-center font-bold mb-6">Welcome to P11 Dewar Scanning Point</h1>
+
+    <div class="logo-container mb-8 text-center">
+      <img
+          src="../assets/img/Desy_logo_3c_web.svg"
+          alt="Company Logo"
+          class="mx-auto max-w-xs h-auto"
+      />
+    </div>
+
     <h2 class="text-3xl text-center font-bold">Please Scan Your Badge...</h2>
 <!--    class="hidden-input"-->
     <input
@@ -33,7 +43,7 @@ export default {
   methods: {
     doLogin: async function(value) {
       try {
-        //action=login&value=hakanj:ispyb
+        //action=login&value=alice:ispyb
         const [ login, password ] = value.split(":");
 
         if (!login || !password) throw new Error('Missing credentials')

@@ -3,7 +3,14 @@
 
 
           <div class="flex sm:flex-row flex-col items-center w-full">
-          <!--
+            <div class="flex-shrink-0 m-4">
+              <img
+                  src="../assets/img/Desy_logo_3c_web.svg"
+                  alt="Logo"
+                  class="w-16 h-16"
+              />
+            </div>
+            <!--
                            Area for messages from back end
                            Currently conditional render based on error or warning
                        -->
@@ -125,7 +132,6 @@
 
         <footer class="py-4">
             <!-- Only here to provide some padding -->
-          {{scanBuffer}}
         </footer>
   </div>
 </template>
@@ -143,7 +149,6 @@ export default {
         dewars: [],
         // Data elements for form input
         barcode: '',
-        scanBuffer: '',
         location: '',
         awb: '',
         // Error message on find dewar, set location etc
