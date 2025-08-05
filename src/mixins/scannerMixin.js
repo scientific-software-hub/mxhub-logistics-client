@@ -29,6 +29,15 @@ export default {
                     case 'login':
                         this.doLogin(value);
                         break;
+                    case 'logout':
+                        this.doLogout();
+                        break;
+                    case 'submit':
+                        this.onSetLocation();
+                        break;
+                    case 'cancel':
+                        this.onClearLocationForm();
+                        break;
                     default:
                     console.warn('Unknown scan action:', action);
                 }

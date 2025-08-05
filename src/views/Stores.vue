@@ -21,15 +21,23 @@
               </div>
             </article>
           </div>
-            <div class="flex justify-end">
+            <div class="flex justify-end items-center">
+              <div class="flex-col text-center">
               <button
                   type="button"
-                  @click="onLogout"
+                  @click="doLogout"
                   class="w-16 h-16 text-white bg-link hover:bg-blue-800 rounded-full p-3 m-2"
                   title="Logout"
               >
                 <i class="fa fa-lock fa-2x"></i>
               </button>
+              </div>
+              <div class="flex-col text-center">
+                <div class="" style="display: inline-block; background-color: #3273dc; padding: 8px; border-radius: 8px;">
+                  <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-logout.svg' @click="processScan('action=logout&value=')">
+                </div>
+                <p class="">Logout</p>
+              </div>
             </div>
           </div>
           <!-- First set of columns are the top form elements -->
@@ -44,6 +52,43 @@
                             <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" v-on:keydown.enter="onLocationEnter" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
                         </div>
 
+                      <h2 class="text-3xl text-center font-bold">Locations:</h2>
+                      <br />
+                      <div class="flex flex-col sm:flex-row">
+                        <div class="w-1/2 mt-4">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-dewar-hotel.svg' @click="processScan('action=location&value=DEWAR-HOTEL')">
+                            </div>
+                            <p class="">DEWAR-HOTEL</p>
+                          </div>
+                        </div>
+                        <div class="w-1/2 mt-4">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-p11-rack.svg' @click="processScan('action=location&value=P11-RACK')">
+                            </div>
+                            <p class="">P11-RACK</p>
+                          </div>
+                        </div>
+                        <div class="w-1/2 mt-4">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-beamline.svg' @click="processScan('action=location&value=BEAMLINE')">
+                            </div>
+                            <p class="">BEAMLINE</p>
+                          </div>
+                        </div>
+                        <div class="w-1/2 mt-4">
+                          <div class="flex-col text-center">
+                            <div class="">
+                              <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="processScan('action=location&value=PICKING-POINT')">
+                            </div>
+                            <p class="">PICKING-POINT-OUT</p>
+                          </div>
+                        </div>
+                      </div> <!-- END STORES LOCATIONS -->
+
                       <h2 class="text-3xl text-center font-bold">Please, scan dewar barcode</h2>
                         <div class="mb-3 px-2">
                             <label class="block text-gray-700">Barcode</label>
@@ -57,43 +102,30 @@
                         </div> -->
 
                         <div class="flex">
-                            <button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="onSetLocation">Submit</button>
-                            <button type="cancel" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2"  v-on:click="onClearLocationForm">Cancel</button>
-                        </div>
-
-                      <h2 class="text-3xl text-center font-bold">Locations:</h2>
-                      <br />
-                      <div class="flex flex-col sm:flex-row">
-                      <div class="w-1/2 mt-4">
-                        <div class="flex-col text-center">
-                          <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="processScan('action=location&value=PICKING-POINT')">
+                            <!--button type="submit" class="text-white bg-link hover:bg-blue-800 rounded p-1 m-2 w-1/2" v-on:click="onSetLocation">Submit</button>
+                            <button type="cancel" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2"  v-on:click="onClearLocationForm">Cancel</button-->
+                          <div class="w-1/2 mt-4">
+                            <div class="flex-col text-center">
+                              <div class="" style="display: inline-block; background-color: #3273dc; padding: 15px; border-radius: 15px;">
+                                <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-submit.svg' @click="processScan('action=submit&value=')">
+                              </div>
+                              <p class="">Submit</p>
+                            </div>
                           </div>
-                          <p class="">PICKING-POINT</p>
-                        </div>
-                      </div>
-                      <div class="w-1/2 mt-4">
-                        <div class="flex-col text-center">
-                          <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-dewar-hotel.svg' @click="processScan('action=location&value=DEWAR-HOTEL')">
+                          <div class="w-1/2 mt-4">
+                            <div class="flex-col text-center">
+                              <div class="" style="display: inline-block; background-color: #209cee; padding: 15px; border-radius: 15px;">
+                                <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-cancel.svg' @click="processScan('action=cancel&value=')">
+                              </div>
+                              <p class="">Cancel</p>
+                            </div>
                           </div>
-                          <p class="">DEWAR-HOTEL</p>
                         </div>
-                      </div>
-                      <div class="w-1/2 mt-4">
-                        <div class="flex-col text-center">
-                          <div class="">
-                            <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-beamline.svg' @click="processScan('action=location&value=BEAMLINE')">
-                          </div>
-                          <p class="">BEAMLINE</p>
-                        </div>
-                      </div>
-                      </div> <!-- END STORES LOCATIONS -->
                     </form>
                 </div>
 
               <div class="w-1/2 border border-solid border-black m-2 p-2 ">
-                <section>
+                <!--section>
                   <h2 class="text-3xl text-center font-bold py-2">Find a Dewar</h2>
                   <form>
                     <div class="mb-3 px-2">
@@ -105,12 +137,12 @@
                       <button type="submit" class="text-white bg-info hover:bg-blue-600 rounded p-1 m-2 w-1/2" v-on:click="onClearFindForm">Cancel</button>
                     </div>
                   </form>
-                </section>
+                </section-->
 
 
                 <!-- Display the stores history -->
                 <div class="flex flex-col m-2 p-2">
-                  <h1 class="text-3xl font-bold text-center p-4">History</h1>
+                  <h1 class="text-3xl font-bold text-center p-1">History</h1>
                   <table class="border border-solid bg-white w-full">
                     <thead class="text-left bg-white-300 font-bold border border-solid">
                     <th class="border px-3 py-2">Date/Time</th><th class="border px-3 py-2">Barcode</th><th class="border px-3 py-2">Location</th><th class="border px-3 py-2">Status</th>
@@ -207,7 +239,7 @@ export default {
             // We don't need to reload the page - just request an update from the server
             this.getDewars(barcode)
         },
-        onLogout: function(){
+        doLogout: function(){
             this.$router.push('/');
         },
         setBarcode: function (value){
