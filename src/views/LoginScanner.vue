@@ -15,7 +15,6 @@
     <input
         ref="scannerInput"
         v-model="scanInput"
-        @keyup.enter="onScan"
         class="hidden-input"
         autofocus
     />
@@ -37,7 +36,7 @@ export default {
     }
   },
   mounted() {
-    // this.$refs.scannerInput.focus()
+    this.$refs.scannerInput.focus()
   },
   mixins: [scannerMixin],
   methods: {
