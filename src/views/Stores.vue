@@ -350,7 +350,7 @@ export default {
         },
         // Internal validation method - check for valid location (stores in or out)
         isValidLocation: function(location) {
-            if (location.toUpperCase() === "PICKING-POINT" || location.toUpperCase() === "DEWAR-HOTEL" || location.toUpperCase() === "BEAMLINE") {
+            if (location.toUpperCase() === "PICKING-POINT" || location.toUpperCase() === "DEWAR-HOTEL" || location.toUpperCase() === "BEAMLINE" || location.toUpperCase() === "P11-RACK") {
                 return true;
             } else {
                 return false;

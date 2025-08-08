@@ -21,7 +21,7 @@ const actions = {
         const data = new FormData();
         data.append("login", login);
         data.append("password", password);
-        const res = await axios.post('/ispyb/ispyb-ws/rest/authenticate?site=DESY_LOCAL', data, {
+        const res = await axios.post('/ispyb/ispyb-ws/rest/authenticate?site=LOCAL', data, {
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
             },
