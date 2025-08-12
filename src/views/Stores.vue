@@ -22,7 +22,7 @@
             </article>
           </div>
             <div class="flex justify-end items-center">
-              <div class="flex-col text-center">
+              <!--div-- class="flex-col text-center">
               <button
                   type="button"
                   @click="doLogout"
@@ -31,7 +31,7 @@
               >
                 <i class="fa fa-lock fa-2x"></i>
               </button>
-              </div>
+              </div-->
               <div class="flex-col text-center">
                 <div class="" style="display: inline-block; background-color: #3273dc; padding: 8px; border-radius: 8px;">
                   <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-logout.svg' @click="processScan('action=logout&value=undefined')">
@@ -49,7 +49,7 @@
                     <form>
                       <div class="mb-3 px-2">
                             <label class="block text-gray-700">Location</label>
-                            <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" placeholder="Scan the location e.g. PICKING-POINT,  DEWAR-HOTEL or BEAMLINE">
+                            <input ref="location" type="text" class="shadow appearance-none border rounded w-full py-1 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" v-model="location" placeholder="Scan the location e.g. DEWAR-HOTEL, P11-RACK, BEAMLINE or PICKING-POINT">
                         </div>
 
                       <h2 class="text-3xl text-center font-bold">Locations:</h2>
@@ -84,7 +84,7 @@
                             <div class="">
                               <img class="inline-block cursor-pointer" width=128 src='../assets/img/qr-picking-point.svg' @click="processScan('action=location&value=PICKING-POINT')">
                             </div>
-                            <p class="">PICKING-POINT-OUT</p>
+                            <p class="">PICKING-POINT</p>
                           </div>
                         </div>
                       </div> <!-- END STORES LOCATIONS -->
